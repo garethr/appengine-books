@@ -10,15 +10,16 @@ part of other applications. Currently the service talks JSON.
 # TODO: Sending correct status codes
 # TODO: All views should return something
 # TODO: Authentication
+# TODO: Write tests
+# TODO: Adding logging
 
 import wsgiref.handlers
 import simplejson
 
 from google.appengine.api import memcache
 from google.appengine.ext import webapp
-from google.appengine.ext import db
 
-from settings import *
+import settings
 from models import Book
 
 # set to False for production
@@ -33,7 +34,7 @@ class BooksHandler(webapp.RequestHandler):
     def get(self):
         "Returns a list of books"
         # first check if we have the list of books in the cache
-        json = memcache.get("books")
+        json = memcache.get("ws_books")
         # if not then we need to create it
         if json is None:
             # get all books
@@ -50,7 +51,7 @@ class BooksHandler(webapp.RequestHandler):
             # convert the datastructure to json
             json = simplejson.dumps(books_for_output, sort_keys=False, indent=4)
             # store the json in the cache for a specified time
-            memcache.add("books", json, settings.CACHE_TIME)
+            memcache.add("ws_books", json, settings.CACHE_TIME)
 
         # serve the response with the correct content type
         self.response.headers['Content-Type'] = 'application/json'        
@@ -128,7 +129,7 @@ class BookHandler(webapp.RequestHandler):
         # delete the book
         book.delete()
         # clear the cache
-        memcache.delete("books")
+        memcache.delete("ws_books")
 
 def application():
     "Separate application method for ease of testing"
