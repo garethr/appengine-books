@@ -99,21 +99,29 @@ class BookHandler(webapp.RequestHandler):
         self.response.out.write(json)
 
     def put(self, asin):
-        "Update an existing book"
-        try:
-            # retrieve the book based on its ASIN value
-            book = Book.all().filter('asin =', asin)[0]
-        except IndexError:
-            # if we don't find a book then throw a Not Found error
-            return self.error(404)
+        "Update an existing book or create a new one"
 
         # get the JSON from the request
         json = self.request.body
         # convert the JSON to a Python object 
         representation = simplejson.loads(json)
         # set the properties
-        book.title = representation['title']
-        book.asin = representation['asin']
+        title = representation['title']
+        asin = representation['asin']
+
+        try:
+            # retrieve the book based on its ASIN value
+            book = Book.all().filter('asin =', asin)[0]
+            book.title = title
+            book.asin = asin
+        except IndexError:
+            # if we don't find a book then create one
+            book = Book(
+                title = title,
+                asin = asin
+            )
+        # we'e updated so we need to clear the cache
+        memcache.delete("ws_books")
         # save the object to the datastore
         book.put()    
     
