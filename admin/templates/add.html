@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form action="/add/" method="post">
+    <div>
+        <label for="title">title</label> <input type="text" id="title" name="title"/>
+    </div>
+    <div>
+        <label for="title">asin</label> <input type="text" id="asin" name="asin"/>
+    </div>
+    <div>
+        <input type="submit" value="Add"/>
+    </div>
+</form>
+
+{% endblock %}
