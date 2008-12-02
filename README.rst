@@ -54,25 +54,11 @@ The backend provides a simple web based interface to the webservice.
 
 :GET:     display list of admin options
 
-/search/
---------
-
-:GET:     display html form for ASIN
-
-/search?q={asin}
-----------------
-
-:GET:    display html details of book
-
 /add/
 -----
 
+:GET:     display html form
 :POST:    display html success message
-
-/delete/
---------
-
-:GET:     display html list of books
 
 /delete/{id}/
 -------------
