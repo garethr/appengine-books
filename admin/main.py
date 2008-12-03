@@ -4,11 +4,9 @@
 This site generates an admin interface to a RESTful webservice.
 """
 
-# TODO: error handling
 # TODO: styles
 # TODO: tests
 # TODO: flash message
-# TODO: logging
 
 import os
 import wsgiref.handlers
@@ -29,9 +27,12 @@ class BooksHandler(webapp.RequestHandler):
     "Page handlers"
     def get(self):
         "Build the admin interface"
-        # get the JSON from the webservice
-        response = fetch(settings.WEB_SERVICE_URL)
-        json = response.content        
+        try:
+            # get the JSON from the webservice
+            response = fetch(settings.WEB_SERVICE_URL)
+        except DownloadError:
+            self.error(500)
+        json = response.content
         # convert the JSON to Python objects
         books = simplejson.loads(json)
         
@@ -84,9 +85,13 @@ class AddBookHandler(webapp.RequestHandler):
         }
         json = simplejson.dumps(book, sort_keys=False)
         # work out the url for the book
-        url = "%s%s" % (settings.WEB_SERVICE_URL, asin)        
-        # send a PUT request to add or update the book record
-        fetch(url, method=PUT, payload=json)
+        url = "%s%s" % (settings.WEB_SERVICE_URL, asin)       
+        logging.info("Request to add %s (%s)" % (title, asin))
+        try:
+            # send a PUT request to add or update the book record
+            fetch(url, method=PUT, payload=json)
+        except DownloadError:
+            self.error(500)
         # redirect back to the home page
         # self.response.set_cookie("flash", "Success")
         
@@ -100,8 +105,12 @@ class DeleteBookHandler(webapp.RequestHandler):
         asin = self.request.get("asin")
         # work out the webservice url
         url = "%s%s" % (settings.WEB_SERVICE_URL, asin)
-        # send a DELETE request for that record
-        fetch(url, method=DELETE)
+        logging.info("Request to delete %s (%s)" % (title, asin)
+        try:
+            # send a DELETE request for that record
+            fetch(url, method=DELETE)
+        except DownloadError:
+            self.error(500)        
         # reirect back to the home page
         self.redirect("/")
 
