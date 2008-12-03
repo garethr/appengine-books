@@ -10,8 +10,9 @@ planned for the future.
 # TODO: 404 page
 # TODO: RSS output
 # TODO: RDF output
+# TODO: XML output
 # TODO: Template
-# TODO: Write tests
+# TODO: Tests
 
 import os
 import wsgiref.handlers

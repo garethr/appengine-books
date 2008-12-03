@@ -7,7 +7,7 @@ part of other applications. Currently the service talks JSON.
 """
 
 # TODO: Authentication
-# TODO: Write tests
+# TODO: Tests
 
 import wsgiref.handlers
 import simplejson
@@ -15,12 +15,30 @@ import logging
 
 from google.appengine.api import memcache
 from google.appengine.ext import webapp
+from google.appengine.api import mail
 
 import settings
 from models import Book
 
 # set to False for production
 _DEBUG = True
+
+def _email_new_book(book):
+    "Send an email about a new book being added to the list"
+
+    # instatiate the object
+    message = mail.EmailMessage(sender="gareth.rushgrove@gmail.com",
+                                subject="New Book Added")
+
+    # ser the to and body fields
+    message.to = "Gareth Rushgrove <gareth.rushgrove@gmail.com>"
+    message.body = """
+    Someone just added %s (%s) to the book list.
+    """ % (book.title, book.asin)
+
+    # send the message
+    logging.debug("Sent email about %s (%s)" % (book.title, book.asin))
+    message.send()
 
 class BooksHandler(webapp.RequestHandler):
     """
@@ -74,6 +92,8 @@ class BooksHandler(webapp.RequestHandler):
         try:
             # save the object to the datastore
             book.put()
+            # send an email about the new book
+            _email_new_book(book)
         except:
             logging.error("Error occured creating new book via POST")
             self.error(500)
@@ -132,6 +152,8 @@ class BookHandler(webapp.RequestHandler):
         try:
             # save the object to the datastore
             book.put()
+            # send an email about the new book
+            _email_new_book(book)            
             # we'e updated so we need to clear the cache
             memcache.delete("ws_books")
         except:

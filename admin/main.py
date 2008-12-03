@@ -4,13 +4,14 @@
 This site generates an admin interface to a RESTful webservice.
 """
 
-# TODO: styles
-# TODO: tests
-# TODO: flash message
+# TODO: Styles
+# TODO: Tests
+# TODO: Flash message
 
 import os
 import wsgiref.handlers
 import simplejson
+import logging
 
 from google.appengine.api.urlfetch import fetch
 from google.appengine.ext.webapp import template
@@ -105,7 +106,7 @@ class DeleteBookHandler(webapp.RequestHandler):
         asin = self.request.get("asin")
         # work out the webservice url
         url = "%s%s" % (settings.WEB_SERVICE_URL, asin)
-        logging.info("Request to delete %s (%s)" % (title, asin)
+        logging.info("Request to delete book with asin %s" % asin)
         try:
             # send a DELETE request for that record
             fetch(url, method=DELETE)
