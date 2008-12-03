@@ -6,3 +6,7 @@ api_version: 1
 handlers:
 - url: .*
   script: main.py
+  login: admin
+  
+- url: /assets
+  static_dir: assets

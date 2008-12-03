@@ -10,6 +10,11 @@
         <li><a href="/">Home</a></li>
         <li><a href="/add/">Add</a></li>
     </ul>    
+    
+    <div>
+    <p>Welcome {{user.nickname}}. <a href="{{logout}}">Logout</a></p>
+    </div>
+    
 {% block content %}
 {% endblock %}
 </body>
