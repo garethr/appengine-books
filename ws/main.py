@@ -6,15 +6,12 @@ a list of books. No admin interface or front end is provided as they are
 part of other applications. Currently the service talks JSON.
 """
 
-# TODO: More exception handling
-# TODO: Sending correct status codes
-# TODO: All views should return something
 # TODO: Authentication
 # TODO: Write tests
-# TODO: Adding logging
 
 import wsgiref.handlers
 import simplejson
+import logging
 
 from google.appengine.api import memcache
 from google.appengine.ext import webapp
@@ -48,6 +45,9 @@ class BooksHandler(webapp.RequestHandler):
                     "asin": book.asin,
                     "key": str(book.key())
                 })
+            # if we have no books then return not found
+            if not books_for_output:
+                return self.error(404)
             # convert the datastructure to json
             json = simplejson.dumps(books_for_output, sort_keys=False, indent=4)
             # store the json in the cache for a specified time
@@ -56,6 +56,7 @@ class BooksHandler(webapp.RequestHandler):
         # serve the response with the correct content type
         self.response.headers['Content-Type'] = 'application/json'        
         # write the json to the response
+        logging.info('Request for book list')
         self.response.out.write(json)
 
     def post(self):
@@ -69,9 +70,14 @@ class BooksHandler(webapp.RequestHandler):
             title = representation['title'],
             asin = representation['asin']
         )
-        # save the object to the datastore
-        book.put()
-        
+        logging.info('Add new book request')
+        try:
+            # save the object to the datastore
+            book.put()
+        except:
+            logging.error("Error occured creating new book via POST")
+            self.error(500)
+
 class BookHandler(webapp.RequestHandler):
     "Exposes methods for acting on a single book record"
 
@@ -95,6 +101,7 @@ class BookHandler(webapp.RequestHandler):
 
         # serve the response with the correct content type
         self.response.headers['Content-Type'] = 'application/json'        
+        logging.info("Request for %s (%s)" % (book.title, book.asin))
         # write the json to the response
         self.response.out.write(json)
 
@@ -120,10 +127,17 @@ class BookHandler(webapp.RequestHandler):
                 title = title,
                 asin = asin
             )
-        # we'e updated so we need to clear the cache
-        memcache.delete("ws_books")
+        logging.info("Update request for %s (%s)" % (title, asin))
         # save the object to the datastore
-        book.put()    
+        try:
+            # save the object to the datastore
+            book.put()
+            # we'e updated so we need to clear the cache
+            memcache.delete("ws_books")
+        except:
+            logging.error("Error occured creating/updating \
+                book %s (%s) via PUT") % (title, asin)
+            self.error(500)
     
     def delete(self, asin):
         "Delete the book from the datastore"
@@ -134,10 +148,16 @@ class BookHandler(webapp.RequestHandler):
             # if we don't find a book then throw a Not Found error
             return self.error(404)
 
-        # delete the book
-        book.delete()
-        # clear the cache
-        memcache.delete("ws_books")
+        logging.info("Update request for %s (%s)" % (book.title, asin))
+        try:
+            # delete the book
+            book.delete()
+            # we'e updated so we need to clear the cache
+            memcache.delete("ws_books")
+        except:
+            logging.error("Error occured deleting %s (%s)"
+                % (book.title, asin))
+            self.error(500)
 
 def application():
     "Separate application method for ease of testing"

@@ -8,19 +8,17 @@ planned for the future.
 """
 
 # TODO: 404 page
-# TODO: Exception handling for fetch
 # TODO: RSS output
 # TODO: RDF output
 # TODO: Template
-# TODO: Run through PyLint
 # TODO: Write tests
-# TODO: Adding logging
 
 import os
 import wsgiref.handlers
 import simplejson
+import logging
 
-from google.appengine.api.urlfetch import fetch
+from google.appengine.api.urlfetch import fetch, DownloadError
 from google.appengine.api import memcache
 from google.appengine.ext.webapp import template
 from google.appengine.ext import webapp
@@ -38,8 +36,11 @@ class PageHandler(webapp.RequestHandler):
         books = memcache.get("web_books")
         # if not then we need to create it
         if books is None:
-            # get the JSON from the webservice
-            response = fetch(settings.WEB_SERVICE_URL)
+            try:
+                # get the JSON from the webservice
+                response = fetch(settings.WEB_SERVICE_URL)
+            except DownloadError:
+                self.error(500)
             json = response.content
             # convert the JSON to Python objects
             books = simplejson.loads(json)
@@ -52,6 +53,7 @@ class PageHandler(webapp.RequestHandler):
         # calculate the template path
         path = os.path.join(os.path.dirname(__file__), 'templates',
             'index.html')
+        logging.info('Request for book list page')
         # render the template with the provided context
         self.response.out.write(template.render(path, context))
         
@@ -63,13 +65,17 @@ class JsonHandler(webapp.RequestHandler):
         json = memcache.get("web_json")
         # if not then we need to create it
         if json is None:
-            # get the JSON from the webservice
-            response = fetch(settings.WEB_SERVICE_URL)
+            try:
+                # get the JSON from the webservice
+                response = fetch(settings.WEB_SERVICE_URL)
+            except DownloadError:
+                self.error(500)
             json = response.content
             # store the JSON in the cache for a specified time
             memcache.add("web_json", json, settings.CACHE_TIME)
         # serve the response with the correct content type
         self.response.headers['Content-Type'] = 'application/json'        
+        logging.info('Request for book list in JSON')
         # write the json to the response
         self.response.out.write(json)
 

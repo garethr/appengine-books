@@ -8,6 +8,7 @@ This site generates an admin interface to a RESTful webservice.
 # TODO: styles
 # TODO: tests
 # TODO: flash message
+# TODO: logging
 
 import os
 import wsgiref.handlers
