@@ -27,7 +27,7 @@ _DEBUG = True
 class BooksHandler(webapp.RequestHandler):
     "Page handlers"
     def get(self):
-        "Build the admin interface"
+        "Build the admin interface"        
         try:
             # get the JSON from the webservice
             response = fetch(settings.WEB_SERVICE_URL)
@@ -44,11 +44,14 @@ class BooksHandler(webapp.RequestHandler):
         user = users.get_current_user()
         logout = users.create_logout_url("/")
         
+        
+        
         # seed the context with the list of books
         context = {
             "books": books,
             "user": user,
-            "logout": logout
+            "logout": logout,
+            "version": os.environ['CURRENT_VERSION_ID']
         }
         # calculate the template path
         path = os.path.join(os.path.dirname(__file__), 'templates',
@@ -66,7 +69,8 @@ class AddBookHandler(webapp.RequestHandler):
         # seed the context with the user details
         context = {
             "user": user,
-            "logout": logout
+            "logout": logout,
+            "version": os.environ['CURRENT_VERSION_ID']
         }
         # calculate the template path
         path = os.path.join(os.path.dirname(__file__), 'templates',
