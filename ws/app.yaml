@@ -4,5 +4,10 @@ runtime: python
 api_version: 1
 
 handlers:
+- url: /load
+  script: loader.py
+  login: admin
+
 - url: .*
   script: main.py
+
