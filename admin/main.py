@@ -13,6 +13,8 @@ import wsgiref.handlers
 import simplejson
 import logging
 
+import gmemsess
+
 from google.appengine.api.urlfetch import fetch
 from google.appengine.ext.webapp import template
 from google.appengine.ext import webapp
@@ -37,25 +39,32 @@ class BooksHandler(webapp.RequestHandler):
         # convert the JSON to Python objects
         books = simplejson.loads(json)
         
-        #message = self.response.get_cookie("flash")
-        #self.response.delete_cookie("flash")
+        # initialise the session
+        sess = gmemsess.Session(self)  
+        # get the flash message if any
+        message = sess.get("flash", "")
 
         # get the current user
         user = users.get_current_user()
         logout = users.create_logout_url("/")
-        
-        
         
         # seed the context with the list of books
         context = {
             "books": books,
             "user": user,
             "logout": logout,
-            "version": os.environ['CURRENT_VERSION_ID']
+            "version": os.environ['CURRENT_VERSION_ID'],
+            "flash": message
         }
         # calculate the template path
         path = os.path.join(os.path.dirname(__file__), 'templates',
             'index.html')
+            
+        # always clear the flash message
+        sess["flash"] = ""
+        # save the sessions
+        sess.save()
+            
         # render the template with the provided context
         self.response.out.write(template.render(path, context))        
         
@@ -70,7 +79,7 @@ class AddBookHandler(webapp.RequestHandler):
         context = {
             "user": user,
             "logout": logout,
-            "version": os.environ['CURRENT_VERSION_ID']
+            "version": os.environ['CURRENT_VERSION_ID'],
         }
         # calculate the template path
         path = os.path.join(os.path.dirname(__file__), 'templates',
@@ -86,7 +95,8 @@ class AddBookHandler(webapp.RequestHandler):
         # create the JSON object
         book = {
             "title": title,
-            "asin": asin
+            "asin": asin,
+            "message": ""
         }
         json = simplejson.dumps(book, sort_keys=False)
         # work out the url for the book
@@ -98,8 +108,15 @@ class AddBookHandler(webapp.RequestHandler):
         except DownloadError:
             self.error(500)
         # redirect back to the home page
-        # self.response.set_cookie("flash", "Success")
-        
+
+        # grab the session data
+        sess = gmemsess.Session(self)
+        # set the flash message
+        sess["flash"] = "Added book %s (%s)" % (title, asin)
+        # save the session data
+        sess.save()
+
+        # redirect back to the home page
         self.redirect("/")
         
 class DeleteBookHandler(webapp.RequestHandler):
@@ -116,6 +133,14 @@ class DeleteBookHandler(webapp.RequestHandler):
             fetch(url, method=DELETE)
         except DownloadError:
             self.error(500)        
+            
+        # grab the session data
+        sess = gmemsess.Session(self)
+        # set the flash message
+        sess["flash"] = "Deleted book with asin %s" % asin
+        # save the session data
+        sess.save()
+                
         # reirect back to the home page
         self.redirect("/")
 
