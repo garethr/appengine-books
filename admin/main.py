@@ -6,7 +6,6 @@ This site generates an admin interface to a RESTful webservice.
 
 # TODO: Styles
 # TODO: Tests
-# TODO: Flash message
 
 import os
 import wsgiref.handlers

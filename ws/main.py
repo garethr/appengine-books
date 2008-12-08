@@ -52,7 +52,7 @@ class BooksHandler(webapp.RequestHandler):
         json = memcache.get("ws_books")
         # if not then we need to create it
         if json is None:
-            # get all books
+            # get all books
             books = Book.all()
             books_for_output = []
                 
