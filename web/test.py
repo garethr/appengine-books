@@ -19,18 +19,37 @@ directory and they should be run when you run test.py via the command line.
 
 import os
 import unittest
+import coverage
 from optparse import OptionParser
      
 def run_tests(verbosity):
     "Run test suite"
-    
-    # list all the files in the tests directory
+
+    # list all the files in the top level directory
     file_list = os.listdir(os.path.join(os.path.abspath(
+        os.path.dirname(os.path.realpath(__file__)))))
+
+    # list all the files in the tests directory
+    test_list = os.listdir(os.path.join(os.path.abspath(
         os.path.dirname(os.path.realpath(__file__))), 'tests'))
+
+    code_modules = []
+    # loop over all the file names
+    for file_name in file_list:
+        extension = os.path.splitext(file_name)[-1]
+        # if they are python files or the test runner
+        if extension == '.py' and file_name != 'test.py':
+            # work out the module name
+            code_module_name = os.path.splitext(file_name)[0:-1][0]
+            # now import the module
+            module = __import__(code_module_name, globals(), locals(), 
+                code_module_name)
+            # and add it to the list of available modules
+            code_modules.append(module)
 
     test_modules = []
     # loop over all the file names
-    for file_name in file_list:
+    for file_name in test_list:
         extension = os.path.splitext(file_name)[-1]
         # if they are python files
         if extension == '.py':
@@ -48,8 +67,19 @@ def run_tests(verbosity):
 
     # set up the test runner
     runner = unittest.TextTestRunner(verbosity=int(verbosity))
+    
+    # set up coverage reporting
+    coverage.use_cache(0)
+    coverage.start()
+    
     # run the tests
     runner.run(suite)
+    
+    # stop coverage reporting
+    coverage.stop()
+    
+    # output coverage report
+    coverage.report(code_modules, show_missing=1)
     
 if __name__ == '__main__':
     # instantiate the arguments parser
