@@ -7,15 +7,11 @@ part of other applications. Currently the service talks JSON.
 """
 
 # TODO: Authentication
-# TODO: Tests
 
-import wsgiref.handlers
-import simplejson
-import logging
+import wsgiref.handlers, simplejson, logging
 
-from google.appengine.api import memcache
+from google.appengine.api import memcache, mail
 from google.appengine.ext import webapp
-from google.appengine.api import mail
 
 import settings
 from models import Book
@@ -30,7 +26,7 @@ def _email_new_book(book):
     message = mail.EmailMessage(sender="gareth.rushgrove@gmail.com",
                                 subject="New Book Added")
 
-    # ser the to and body fields
+    # set the to and body fields
     message.to = "Gareth Rushgrove <gareth.rushgrove@gmail.com>"
     message.body = """
     Someone just added %s (%s) to the book list.

@@ -7,10 +7,11 @@ from webtest import TestApp, AppError
 from google.appengine.api import urlfetch, mail_stub, apiproxy_stub_map, urlfetch_stub, user_service_stub, datastore_file_stub
 from google.appengine.api.memcache import memcache_stub
 
-from main import application, _email_new_book
+from main import application, main
 from models import Book
+import settings 
 
-class EmailTest(unittest.TestCase):
+class BooksTest(unittest.TestCase):
     def setUp(self):
                 
         self.app = TestApp(application())
@@ -24,16 +25,8 @@ class EmailTest(unittest.TestCase):
         
         os.environ['APPLICATION_ID'] = "temp"
 
-    def test_sending_email(self):
-        self.assertEquals(0, Book.all().count())
-        book = Book(
-           title = "test",
-           asin = "1"
-        )    
-        book.put()  
-        self.assertEquals(1, Book.all().count())
-        # TODO: needs assertion
-        _email_new_book(book)
-            
+    def test_cache_time(self):
+        self.assertEqual(60, settings.CACHE_TIME)
+
 if __name__ == "__main__":
     unittest.main()

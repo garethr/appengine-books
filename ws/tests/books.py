@@ -9,6 +9,7 @@ from google.appengine.api.memcache import memcache_stub
 
 from main import application
 from models import Book
+import settings 
 
 class BooksTest(unittest.TestCase):
     def setUp(self):
