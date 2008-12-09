@@ -12,14 +12,10 @@ planned for the future.
 # TODO: RDF output
 # TODO: XML output
 # TODO: Template
-# TODO: Tests
 
-import os
-import wsgiref.handlers
-import simplejson
-import logging
+import os, wsgiref.handlers, simplejson, logging
 
-from google.appengine.api.urlfetch import fetch, DownloadError
+from google.appengine.api.urlfetch import fetch, DownloadError, InvalidURLError
 from google.appengine.api import memcache
 from google.appengine.ext.webapp import template
 from google.appengine.ext import webapp
@@ -40,7 +36,7 @@ class PageHandler(webapp.RequestHandler):
             try:
                 # get the JSON from the webservice
                 response = fetch(settings.WEB_SERVICE_URL)
-            except DownloadError:
+            except InvalidURLError, DownloadError:
                 self.error(500)
             json = response.content
             # convert the JSON to Python objects
