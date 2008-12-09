@@ -45,7 +45,8 @@ class PageHandler(webapp.RequestHandler):
             memcache.add("web_books", books, settings.CACHE_TIME)
         # seed the context with the list of books
         context = {
-            "books": books
+            "books": books,
+            "static": settings.STATIC_URL
         }
         # calculate the template path
         path = os.path.join(os.path.dirname(__file__), 'templates',

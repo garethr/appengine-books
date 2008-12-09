@@ -1,0 +1,25 @@
+h1. Google AppEngine Books Site
+
+This is a work in progress series of applications for managing and displaying a list of books. Its primary purpose is to serve as an excuse to play around with Google AppEngine and to experiment with RESTful service orientated architectures.
+
+The application is split over four separate appengine instances. If you think this all sounds like overkill for this particular example then you'd probably be right. But it does all fit together rather nicely in my opinion.
+
+h2. Webservice
+
+The webservice acts as the datastore. It keeps hold of the current list of 
+books and provides a JSON based interface for managing things.
+
+h2. Front End Web Site
+
+The front end of the site provides a simple list of books, available in 
+different flavours. It currently supports HTML and JSON. All links will contain an Amazon affiliate code.
+
+h2. Backend Web Site
+
+The backend provides a simple web based interface to the webservice. This should allow you to add new books, change existing ones and delete any that you no longer need.
+
+h2. Static Server
+
+To remove any potential load from the Front End Web Site application I'm hosting all the images and stylesheets and the like on a separate application.
+
+_further documentation might be available in the Sphinx generated documentation in the docs directory._
