@@ -14,7 +14,7 @@ import logging
 
 import gmemsess
 
-from google.appengine.api.urlfetch import fetch
+from google.appengine.api.urlfetch import fetch, DownloadError
 from google.appengine.ext.webapp import template
 from google.appengine.ext import webapp
 from google.appengine.api.urlfetch import DELETE, PUT
@@ -23,7 +23,7 @@ from google.appengine.api import users
 import settings
 
 # set to False for production
-_DEBUG = True
+_DEBUG = settings.DEBUG
 
 class BooksHandler(webapp.RequestHandler):
     "Page handlers"

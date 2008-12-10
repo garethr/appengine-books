@@ -23,7 +23,7 @@ from google.appengine.ext import webapp
 import settings
 
 # set to False for production
-_DEBUG = True
+_DEBUG = settings.DEBUG
 
 class PageHandler(webapp.RequestHandler):
     "Expose HTML views of the data"

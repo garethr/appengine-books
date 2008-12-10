@@ -11,7 +11,6 @@ bulkload_client.py
 """
 
 from google.appengine.ext import bulkload
-from google.appengine.api import datastore_types
 from google.appengine.ext import search
 
 class BookLoader(bulkload.Loader):

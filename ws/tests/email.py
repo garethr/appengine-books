@@ -14,11 +14,11 @@ class EmailTest(unittest.TestCase):
     def setUp(self):
                 
         self.app = TestApp(application())
-    	apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap()
-    	apiproxy_stub_map.apiproxy.RegisterStub('mail', mail_stub.MailServiceStub())
-    	apiproxy_stub_map.apiproxy.RegisterStub('user', user_service_stub.UserServiceStub())
-    	apiproxy_stub_map.apiproxy.RegisterStub('urlfetch', urlfetch_stub.URLFetchServiceStub())
-    	apiproxy_stub_map.apiproxy.RegisterStub('memcache', memcache_stub.MemcacheServiceStub())        
+        apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap()
+        apiproxy_stub_map.apiproxy.RegisterStub('mail', mail_stub.MailServiceStub())
+        apiproxy_stub_map.apiproxy.RegisterStub('user', user_service_stub.UserServiceStub())
+        apiproxy_stub_map.apiproxy.RegisterStub('urlfetch', urlfetch_stub.URLFetchServiceStub())
+        apiproxy_stub_map.apiproxy.RegisterStub('memcache', memcache_stub.MemcacheServiceStub())        
         stub = datastore_file_stub.DatastoreFileStub('temp', '/dev/null', '/dev/null')
         apiproxy_stub_map.apiproxy.RegisterStub('datastore_v3', stub)
         

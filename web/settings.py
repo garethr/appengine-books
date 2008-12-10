@@ -2,6 +2,9 @@
 Settings for the web site
 """
 
+# are we debugging
+DEBUG = True
+
 # maximum lifetime for the cache 
 CACHE_TIME = 60
 

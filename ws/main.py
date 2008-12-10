@@ -17,7 +17,7 @@ import settings
 from models import Book
 
 # set to False for production
-_DEBUG = True
+_DEBUG = settings.DEBUG
 
 def _email_new_book(book):
     "Send an email about a new book being added to the list"
