@@ -18,7 +18,7 @@ class BookLoader(bulkload.Loader):
     def __init__(self):
         "Set the expected data structure for the CSV file"
         bulkload.Loader.__init__(self, 'Book', 
-            [('title', str), ('asin', str),])
+            [('title', str), ('ident', str), ('url', str),])
 
     def HandleEntity(self, entity):
         "Make the entities searchable"

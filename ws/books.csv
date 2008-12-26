@@ -1,5 +1,5 @@
-title, asin
-title1, asin1
-title2, asin2
-title3, asin3
-title4, asin4
+title, ident, url
+title1, ident1, http://example.com
+title2, ident2, http://example.com
+title3, ident3, http://example.com
+title4, ident4, http://example.com

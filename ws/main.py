@@ -30,10 +30,10 @@ def _email_new_book(book):
     message.to = "Gareth Rushgrove <gareth.rushgrove@gmail.com>"
     message.body = """
     Someone just added %s (%s) to the book list.
-    """ % (book.title, book.asin)
+    """ % (book.title, book.ident)
 
     # send the message
-    logging.debug("Sent email about %s (%s)" % (book.title, book.asin))
+    logging.debug("Sent email about %s (%s)" % (book.title, book.ident))
     message.send()
 
 class BooksHandler(webapp.RequestHandler):
@@ -56,7 +56,8 @@ class BooksHandler(webapp.RequestHandler):
                 # for each book create a data structure representation
                 books_for_output.append({
                     "title": book.title,
-                    "asin": book.asin,
+                    "ident": book.ident,
+                    "url": book.url,
                     "key": str(book.key())
                 })
             # if we have no books then return not found
@@ -82,7 +83,8 @@ class BooksHandler(webapp.RequestHandler):
         # create a datastore object from the JSON
         book = Book(
             title = representation['title'],
-            asin = representation['asin']
+            ident = representation['ident'],
+            url = representation['url']
         )
         logging.info('Add new book request')
         try:
@@ -97,11 +99,11 @@ class BooksHandler(webapp.RequestHandler):
 class BookHandler(webapp.RequestHandler):
     "Exposes methods for acting on a single book record"
 
-    def get(self, asin):
+    def get(self, ident):
         "Show the JSON representation of the book"
         try:
-            # retrieve the book based on its ASIN value
-            book = Book.all().filter('asin =', asin)[0]
+            # retrieve the book based on its ident value
+            book = Book.all().filter('ident =', ident)[0]
         except IndexError:
             # if we don't find a book then throw a Not Found error
             return self.error(404)
@@ -109,7 +111,8 @@ class BookHandler(webapp.RequestHandler):
         # create the datastructure we will convert to JSON
         book_for_output = {
             "title": book.title,
-            "asin": book.asin,
+            "ident": book.ident,
+            "url": book.url,
             "key": str(book.key())
         }
         # create the JSON object
@@ -117,11 +120,11 @@ class BookHandler(webapp.RequestHandler):
 
         # serve the response with the correct content type
         self.response.headers['Content-Type'] = 'application/json'        
-        logging.info("Request for %s (%s)" % (book.title, book.asin))
+        logging.info("Request for %s (%s)" % (book.title, book.ident))
         # write the json to the response
         self.response.out.write(json)
 
-    def put(self, asin):
+    def put(self, ident):
         "Update an existing book or create a new one"
 
         # get the JSON from the request
@@ -130,20 +133,23 @@ class BookHandler(webapp.RequestHandler):
         representation = simplejson.loads(json)
         # set the properties
         title = representation['title']
-        asin = representation['asin']
-
+        ident = representation['ident']
+        url = representation['url']
+        
         try:
-            # retrieve the book based on its ASIN value
-            book = Book.all().filter('asin =', asin)[0]
+            # retrieve the book based on its ident value
+            book = Book.all().filter('ident =', ident)[0]
             book.title = title
-            book.asin = asin
+            book.ident = ident
+            book.url = url
         except IndexError:
             # if we don't find a book then create one
             book = Book(
                 title = title,
-                asin = asin
+                ident = ident,
+                url = url
             )
-        logging.info("Update request for %s (%s)" % (title, asin))
+        logging.info("Update request for %s (%s)" % (title, ident))
         # save the object to the datastore
         try:
             # save the object to the datastore
@@ -154,19 +160,19 @@ class BookHandler(webapp.RequestHandler):
             memcache.delete("ws_books")
         except:
             logging.error("Error occured creating/updating \
-                book %s (%s) via PUT") % (title, asin)
+                book %s (%s) via PUT") % (title, ident)
             self.error(500)
     
-    def delete(self, asin):
+    def delete(self, ident):
         "Delete the book from the datastore"
         try:
-            # retrieve the book based on its ASIN value
-            book = Book.all().filter('asin =', asin)[0]
+            # retrieve the book based on its ident value
+            book = Book.all().filter('ident =', ident)[0]
         except IndexError:
             # if we don't find a book then throw a Not Found error
             return self.error(404)
 
-        logging.info("Update request for %s (%s)" % (book.title, asin))
+        logging.info("Update request for %s (%s)" % (book.title, ident))
         try:
             # delete the book
             book.delete()
@@ -174,7 +180,7 @@ class BookHandler(webapp.RequestHandler):
             memcache.delete("ws_books")
         except:
             logging.error("Error occured deleting %s (%s)"
-                % (book.title, asin))
+                % (book.title, ident))
             self.error(500)
 
 def application():

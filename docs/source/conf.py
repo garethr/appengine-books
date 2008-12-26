@@ -177,3 +177,6 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_use_modindex = True
+
+# todo list management only in 0.5
+#todo_include_todos = True

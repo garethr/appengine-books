@@ -38,7 +38,8 @@ class BooksTest(unittest.TestCase):
         self.assertEquals(0, Book.all().count())
         book = Book(
             title = "test",
-            asin = "1"
+            ident = "1",
+            url = "http://example.com"
         )    
         book.put()   
         response = self.app.get('/books', expect_errors=True)        
@@ -48,7 +49,8 @@ class BooksTest(unittest.TestCase):
         self.assertEquals(0, Book.all().count())
         book = Book(
             title = "test",
-            asin = "1"
+            ident = "1",
+            url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())
@@ -62,19 +64,21 @@ class BooksTest(unittest.TestCase):
         self.assertEquals(0, Book.all().count())
         book = Book(
             title = "test",
-            asin = "1"
+            ident = "1",
+            url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())
         response = self.app.get('/books/', expect_errors=True)
-        response.mustcontain('"asin": "1"')
+        response.mustcontain('"ident": "1"')
         response.mustcontain('"title": "test"')
 
     def test_response_contents_json_from_books(self):
         self.assertEquals(0, Book.all().count())
         book = Book(
             title = "test",
-            asin = "1"
+            ident = "1",
+            url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())
@@ -84,14 +88,15 @@ class BooksTest(unittest.TestCase):
         except AttributeError:
             assert(False)
         self.assertEqual(len(json), 1)
-        self.assertEqual(json[0]['asin'], "1")
+        self.assertEqual(json[0]['ident'], "1")
         self.assertEqual(json[0]['title'], "test")
             
     def test_books_views_return_correct_mime_type(self):
         self.assertEquals(0, Book.all().count())
         book = Book(
             title = "test",
-            asin = "1"
+            ident = "1",
+            url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())

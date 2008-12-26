@@ -28,13 +28,15 @@ class BookTest(unittest.TestCase):
         self.assertEquals(0, Book.all().count())
         book = Book(
            title = "test",
-           asin = "1"
+           ident = "1",
+           url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())
         book = Book(
            title = "test2",
-           asin = "2"
+           ident = "2",
+           url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(2, Book.all().count())
@@ -43,7 +45,8 @@ class BookTest(unittest.TestCase):
         self.assertEquals(0, Book.all().count())
         book = Book(
            title = "test",
-           asin = "1"
+           ident = "1",
+           url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())
@@ -59,10 +62,11 @@ class BookTest(unittest.TestCase):
         self.assertEquals(0, Book.all().count())
         book = Book(
             title = "test",
-            asin = "1"
+            ident = "1",
+            url = "http://example.com"
         )    
         book.put()
-        path = "/books/%s" % book.asin
+        path = "/books/%s" % book.ident
         response = self.app.get(path, expect_errors=True)        
         self.assertEquals("200 OK", response.status)
 
@@ -70,11 +74,12 @@ class BookTest(unittest.TestCase):
         self.assertEquals(0, Book.all().count())
         book = Book(
             title = "test",
-            asin = "1"
+            ident = "1",
+            url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())
-        response = self.app.get('/books/%s' % book.asin, expect_errors=True)
+        response = self.app.get('/books/%s' % book.ident, expect_errors=True)
         try:
             response.json
         except AttributeError:
@@ -84,56 +89,61 @@ class BookTest(unittest.TestCase):
         self.assertEquals(0, Book.all().count())
         book = Book(
             title = "test",
-            asin = "1"
+            ident = "1",
+            url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())
-        response = self.app.get('/books/%s' % book.asin, expect_errors=True)
-        response.mustcontain('"asin": "1"')
+        response = self.app.get('/books/%s' % book.ident, expect_errors=True)
+        response.mustcontain('"ident": "1"')
         response.mustcontain('"title": "test"')
 
     def test_response_contents_json_from_book(self):
         self.assertEquals(0, Book.all().count())
         book = Book(
             title = "test",
-            asin = "1"
+            ident = "1",
+            url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())
-        response = self.app.get('/books/%s' % book.asin, expect_errors=True)
+        response = self.app.get('/books/%s' % book.ident, expect_errors=True)
         try:
             json = response.json
         except AttributeError:
             assert(False)
-        self.assertEqual(json['asin'], "1")
+        self.assertEqual(json['ident'], "1")
         self.assertEqual(json['title'], "test")
 
     def test_book_views_return_correct_mime_type(self):
         self.assertEquals(0, Book.all().count())
         book = Book(
             title = "test",
-            asin = "1"
+            ident = "1",
+            url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())
-        response = self.app.get('/books/%s' % book.asin, expect_errors=True)
+        response = self.app.get('/books/%s' % book.ident, expect_errors=True)
         self.assertEquals(response.content_type, "application/json")
         
     def test_book_deletion_via_service(self):
         self.assertEquals(0, Book.all().count())
         book = Book(
            title = "test",
-           asin = "1"
+           ident = "1",
+           url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())
-        response = self.app.delete('/books/%s' % book.asin, expect_errors=True)
+        response = self.app.delete('/books/%s' % book.ident, expect_errors=True)
         self.assertEquals(0, Book.all().count())
         
     def test_book_addition_via_service_put(self):
         json = """{
-            "asin": "1", 
-            "title": "test"
+            "ident": "1", 
+            "title": "test",
+            "url": "http://example.com"
         }"""
         self.assertEquals(0, Book.all().count())
         response = self.app.put('/books/1', params=json, expect_errors=True)
@@ -145,13 +155,15 @@ class BookTest(unittest.TestCase):
         self.assertEquals(0, Book.all().count())
         book = Book(
            title = "test",
-           asin = "1"
+           ident = "1",
+           url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())
         json = """{
-            "asin": "1", 
-            "title": "test update"
+            "ident": "1", 
+            "title": "test update",
+            "url": "http://example.com"
         }"""
         response = self.app.put('/books/1', params=json, expect_errors=True)
         self.assertEquals(1, Book.all().count())
@@ -161,13 +173,14 @@ class BookTest(unittest.TestCase):
             json = response.json
         except AttributeError:
             assert(False)
-        self.assertEqual(json['asin'], "1")
+        self.assertEqual(json['ident'], "1")
         self.assertEqual(json['title'], "test update")
         
     def test_book_addition_via_service_post(self):
         json = """{
-            "asin": "1", 
-            "title": "test"
+            "ident": "1", 
+            "title": "test",
+            "url": "http://example.com"
         }"""
         self.assertEquals(0, Book.all().count())
         response = self.app.post('/books', params=json, expect_errors=True)

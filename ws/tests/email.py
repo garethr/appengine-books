@@ -28,7 +28,8 @@ class EmailTest(unittest.TestCase):
         self.assertEquals(0, Book.all().count())
         book = Book(
            title = "test",
-           asin = "1"
+           ident = "1",
+           url = "http://example.com"
         )    
         book.put()  
         self.assertEquals(1, Book.all().count())

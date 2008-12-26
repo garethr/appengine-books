@@ -6,7 +6,7 @@
     {% for book in books %}
         <li>{{book.title}}  
             <form action="/delete/" method="post">
-                <input type="hidden" name="asin" value="{{book.asin}}" />
+                <input type="hidden" name="ident" value="{{book.ident}}" />
                 <input type="submit"  value="Delete" />
             </form>
         </li>

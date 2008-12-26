@@ -10,8 +10,8 @@
 <ul>
 {% for book in books %}
     <li>
-        {{book.title}}
-        {{book.asin}}
+        <a href="{{book.url}}">{{book.title}}</a>
+        
     </li>
 {% endfor %}
 </ul>

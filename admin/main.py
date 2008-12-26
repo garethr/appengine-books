@@ -36,8 +36,10 @@ class BooksHandler(webapp.RequestHandler):
             self.error(500)
         json = response.content
         # convert the JSON to Python objects
-        books = simplejson.loads(json)
-        
+        try:
+            books = simplejson.loads(json)
+        except ValueError:
+            books = []
         # initialise the session
         sess = gmemsess.Session(self)  
         # get the flash message if any
@@ -90,17 +92,19 @@ class AddBookHandler(webapp.RequestHandler):
         "Add the book to the webservice"
         # get the posted data
         title = self.request.get("title")
-        asin = self.request.get("asin")
+        ident = self.request.get("ident")
+        url = self.request.get("url")
         # create the JSON object
         book = {
             "title": title,
-            "asin": asin,
+            "ident": ident,
+            "url": url,
             "message": ""
         }
         json = simplejson.dumps(book, sort_keys=False)
         # work out the url for the book
-        url = "%s%s" % (settings.WEB_SERVICE_URL, asin)       
-        logging.info("Request to add %s (%s)" % (title, asin))
+        url = "%s%s" % (settings.WEB_SERVICE_URL, ident)       
+        logging.info("Request to add %s (%s)" % (title, ident))
         try:
             # send a PUT request to add or update the book record
             fetch(url, method=PUT, payload=json)
@@ -111,7 +115,7 @@ class AddBookHandler(webapp.RequestHandler):
         # grab the session data
         sess = gmemsess.Session(self)
         # set the flash message
-        sess["flash"] = "Added book %s (%s)" % (title, asin)
+        sess["flash"] = "Added book %s (%s)" % (title, ident)
         # save the session data
         sess.save()
 
@@ -122,11 +126,11 @@ class DeleteBookHandler(webapp.RequestHandler):
     "Handlers for deleting records"
     def post(self):
         "Delete a book from the webservice datastore"
-        # get the asin from the request
-        asin = self.request.get("asin")
+        # get the ident from the request
+        ident = self.request.get("ident")
         # work out the webservice url
-        url = "%s%s" % (settings.WEB_SERVICE_URL, asin)
-        logging.info("Request to delete book with asin %s" % asin)
+        url = "%s%s" % (settings.WEB_SERVICE_URL, ident)
+        logging.info("Request to delete book with ident %s" % ident)
         try:
             # send a DELETE request for that record
             fetch(url, method=DELETE)
@@ -136,7 +140,7 @@ class DeleteBookHandler(webapp.RequestHandler):
         # grab the session data
         sess = gmemsess.Session(self)
         # set the flash message
-        sess["flash"] = "Deleted book with asin %s" % asin
+        sess["flash"] = "Deleted book with ident %s" % ident
         # save the session data
         sess.save()
                 
