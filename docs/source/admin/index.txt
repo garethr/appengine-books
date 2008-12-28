@@ -1,0 +1,21 @@
+====================
+About the Admin Site
+====================
+
+The backend provides a simple web based interface to the webservice.
+
+/
+-
+
+:GET:     display list of admin options
+
+/add/
+-----
+
+:GET:     display html form
+:POST:    display html success message
+
+/delete/{id}/
+-------------
+
+:POST:    display html successfully deleted message

@@ -1,0 +1,21 @@
+==================
+About the Web Site
+==================
+
+The front end of the site provides a simple list of books, available in 
+different flavours. All links will contain an Amazon affiliate code.
+
+/
+-
+
+:GET:     display html list of books
+
+/books.json
+-----------
+
+:GET:     display json list of books
+
+/books.rss
+----------
+
+:GET:     display rss list of books

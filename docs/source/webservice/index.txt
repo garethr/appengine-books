@@ -1,0 +1,34 @@
+===========================
+About the Web Service
+===========================
+
+.. note::
+
+   Work in progress.
+
+The webservice acts as the datastore. It keeps hold of the current list of 
+books and provides a JSON based interface for managing things.
+
+.. module:: webservice
+   :synopsis: simple datastore management web service.
+.. moduleauthor:: Gareth Rushgrove <gareth@morethanseven.net>   
+
+.. literalinclude:: ../../../ws/models.py
+   :linenos:
+
+.. literalinclude:: ../../../ws/main.py
+   :linenos:
+
+
+/books/
+-------
+
+:GET:     return json list of books
+:POST:    post json of book to add new book
+
+/books/{id}/
+------------
+
+:GET:     get json of book details
+:DELETE:  delete book
+:PUT:     update book record
