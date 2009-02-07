@@ -13,3 +13,6 @@ WEB_SERVICE_URL = "http://localhost:8080/books/"
 
 # where does the static server live
 STATIC_URL = "http://localhost:8083/"
+
+# authorisation key
+AUTH = "G1R2"

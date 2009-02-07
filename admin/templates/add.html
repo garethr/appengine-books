@@ -2,15 +2,30 @@
 
 {% block content %}
 
+{% if book %}
+    <p>All fields are required:</p>
+{% endif %}
+
+{{book}}
+
 <form action="/add/" method="post">
     <div>
-        <label for="title">title</label> <input type="text" id="title" name="title"/>
+        <label for="title">title</label> <input type="text" id="title" name="title" value="{{book.title}}"/>
     </div>
     <div>
-        <label for="ident">ident</label> <input type="text" id="ident" name="ident"/>
+        <label for="ident">ident</label> <input type="text" id="ident" name="ident" value="{{book.ident}}"/>
     </div>
     <div>
-        <label for="url">url</label> <input type="text" id="url" name="url"/>
+        <label for="author">author</label> <input type="text" id="author" name="author" value="{{book.author}}"/>
+    </div>
+    <div>
+        <label for="image">image</label> <input type="text" id="image" name="image" value="{{book.image}}"/>
+    </div>
+    <div>
+        <label for="url">url</label> <input type="text" id="url" name="url" value="{{book.url}}"/>
+    </div>
+    <div>
+        <label for="notes">notes</label> <textarea id="notes" name="notes">{{book.notes}}</textarea>
     </div>
     <div>
         <input type="submit" value="Add"/>

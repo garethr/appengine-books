@@ -35,7 +35,7 @@ class PageHandler(webapp.RequestHandler):
         if books is None:
             try:
                 # get the JSON from the webservice
-                response = fetch(settings.WEB_SERVICE_URL)
+                response = fetch("%s?auth=%s" % (settings.WEB_SERVICE_URL, settings.AUTH))
             except InvalidURLError, DownloadError:
                 self.error(500)
             json = response.content
@@ -65,7 +65,7 @@ class JsonHandler(webapp.RequestHandler):
         if json is None:
             try:
                 # get the JSON from the webservice
-                response = fetch(settings.WEB_SERVICE_URL)
+                response = fetch("%s?auth=%s" % (settings.WEB_SERVICE_URL, settings.AUTH))
             except DownloadError:
                 self.error(500)
             json = response.content

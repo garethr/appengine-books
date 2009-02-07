@@ -29,6 +29,9 @@ class EmailTest(unittest.TestCase):
         book = Book(
            title = "test",
            ident = "1",
+           author = "author",
+           notes = "",
+           image = "http://example.com/image.gif",
            url = "http://example.com"
         )    
         book.put()  

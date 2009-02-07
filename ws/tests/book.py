@@ -29,6 +29,9 @@ class BookTest(unittest.TestCase):
         book = Book(
            title = "test",
            ident = "1",
+           author = "author",
+           notes = "",
+           image = "http://example.com/image.gif",
            url = "http://example.com"
         )    
         book.put()  
@@ -36,6 +39,9 @@ class BookTest(unittest.TestCase):
         book = Book(
            title = "test2",
            ident = "2",
+           author = "author",
+           notes = "",
+           image = "http://example.com/image.gif",
            url = "http://example.com"
         )    
         book.put()  
@@ -46,6 +52,9 @@ class BookTest(unittest.TestCase):
         book = Book(
            title = "test",
            ident = "1",
+           author = "author",
+           notes = "",
+           image = "http://example.com/image.gif",
            url = "http://example.com"
         )    
         book.put()  
@@ -63,6 +72,9 @@ class BookTest(unittest.TestCase):
         book = Book(
             title = "test",
             ident = "1",
+            author = "author",
+            notes = "",
+            image = "http://example.com/image.gif",
             url = "http://example.com"
         )    
         book.put()
@@ -75,6 +87,9 @@ class BookTest(unittest.TestCase):
         book = Book(
             title = "test",
             ident = "1",
+            author = "author",
+            notes = "",
+            image = "http://example.com/image.gif",
             url = "http://example.com"
         )    
         book.put()  
@@ -90,6 +105,9 @@ class BookTest(unittest.TestCase):
         book = Book(
             title = "test",
             ident = "1",
+            author = "author",
+            notes = "",
+            image = "http://example.com/image.gif",
             url = "http://example.com"
         )    
         book.put()  
@@ -103,6 +121,9 @@ class BookTest(unittest.TestCase):
         book = Book(
             title = "test",
             ident = "1",
+            author = "author",
+            notes = "",
+            image = "http://example.com/image.gif",
             url = "http://example.com"
         )    
         book.put()  
@@ -120,6 +141,9 @@ class BookTest(unittest.TestCase):
         book = Book(
             title = "test",
             ident = "1",
+            author = "author",
+            notes = "",
+            image = "http://example.com/image.gif",
             url = "http://example.com"
         )    
         book.put()  
@@ -132,6 +156,9 @@ class BookTest(unittest.TestCase):
         book = Book(
            title = "test",
            ident = "1",
+           author = "author",
+           notes = "",
+           image = "http://example.com/image.gif",
            url = "http://example.com"
         )    
         book.put()  
@@ -143,6 +170,9 @@ class BookTest(unittest.TestCase):
         json = """{
             "ident": "1", 
             "title": "test",
+            "author": "author",
+            "notes": "",
+            "image": "http://example.com/image.gif",
             "url": "http://example.com"
         }"""
         self.assertEquals(0, Book.all().count())
@@ -156,6 +186,9 @@ class BookTest(unittest.TestCase):
         book = Book(
            title = "test",
            ident = "1",
+           author = "author",
+           notes = "",
+           image = "http://example.com/image.gif",
            url = "http://example.com"
         )    
         book.put()  
@@ -163,6 +196,9 @@ class BookTest(unittest.TestCase):
         json = """{
             "ident": "1", 
             "title": "test update",
+            "author": "author",
+            "notes": "",
+            "image": "http://example.com/image.gif",
             "url": "http://example.com"
         }"""
         response = self.app.put('/books/1', params=json, expect_errors=True)
@@ -180,6 +216,9 @@ class BookTest(unittest.TestCase):
         json = """{
             "ident": "1", 
             "title": "test",
+            "author": "author",
+            "notes": "",
+            "image": "http://example.com/image.gif",
             "url": "http://example.com"
         }"""
         self.assertEquals(0, Book.all().count())

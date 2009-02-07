@@ -3,17 +3,47 @@
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <title></title>
+    <title>Learn to Programme</title>
+    
+    <link rel="stylesheet" href="{{static}}reset.css" type="text/css" media="screen" charset="utf-8"/>
+    <link rel="stylesheet" href="{{static}}common.css" type="text/css" media="screen" charset="utf-8"/>
+    
 </head>
 <body>
-{% if books %}
-<ul>
-{% for book in books %}
-    <li>
-        <a href="{{book.url}}">{{book.title}}</a>
-    </li>
-{% endfor %}
-</ul>
-{% endif %}
+    
+<div id="main">
+    
+    <div id="header">
+        <h1>Learn to Programme</h1>
+    </div>
+    
+    <div id="content">
+        
+        <div id="intro">
+            <p>Something about the importance of books.</p>
+        </div>
+        
+    {% if books %}
+    <ul>
+    {% for book in books %}
+        <li>
+            <a href="{{book.url}}">
+                <img src="{{book.image}}" alt="cover for {{book.title}}"/>
+                {{book.title}} <span>by {{book.author}}</span>
+            </a>
+            <p>{{book.notes}}</p>
+        </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    
+    </div>
+    
+    <div id="footer">
+        <p>From <a href="http://morethanseven.net">Gareth Rushgrove</a>. Build on Google App Engine.</p>
+    </div>
+
+</div>
+
 </body>
 </html>

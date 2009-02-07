@@ -45,6 +45,12 @@ class BooksHandler(webapp.RequestHandler):
     def get(self):
         "Returns a list of books"
         # first check if we have the list of books in the cache
+        
+        # check we have the correct authentication ket
+        auth = self.request.get("auth")
+        if auth != settings.AUTH:
+            return self.error(401)
+        
         json = memcache.get("ws_books")
         # if not then we need to create it
         if json is None:
@@ -57,6 +63,9 @@ class BooksHandler(webapp.RequestHandler):
                 books_for_output.append({
                     "title": book.title,
                     "ident": book.ident,
+                    "author": book.author,
+                    "image": book.image,
+                    "notes": book.notes,
                     "url": book.url,
                     "key": str(book.key())
                 })
@@ -76,6 +85,12 @@ class BooksHandler(webapp.RequestHandler):
 
     def post(self):
         "Creates a new book record from a json representation"
+        
+        # check we have the correct authentication ket
+        auth = self.request.get("auth")
+        if auth != settings.AUTH:
+            return self.error(401)
+        
         # get the request body
         json = self.request.body
         # convert the JSON to a Python object
@@ -84,6 +99,9 @@ class BooksHandler(webapp.RequestHandler):
         book = Book(
             title = representation['title'],
             ident = representation['ident'],
+            author = representation['author'],
+            image = representation['image'],
+            notes = representation['notes'],
             url = representation['url']
         )
         logging.info('Add new book request')
@@ -101,6 +119,12 @@ class BookHandler(webapp.RequestHandler):
 
     def get(self, ident):
         "Show the JSON representation of the book"
+        
+        # check we have the correct authentication ket
+        auth = self.request.get("auth")
+        if auth != settings.AUTH:
+            return self.error(401)
+        
         try:
             # retrieve the book based on its ident value
             book = Book.all().filter('ident =', ident)[0]
@@ -112,6 +136,9 @@ class BookHandler(webapp.RequestHandler):
         book_for_output = {
             "title": book.title,
             "ident": book.ident,
+            "author": book.author,
+            "image": book.image,
+            "notes": book.notes,
             "url": book.url,
             "key": str(book.key())
         }
@@ -127,6 +154,11 @@ class BookHandler(webapp.RequestHandler):
     def put(self, ident):
         "Update an existing book or create a new one"
 
+        # check we have the correct authentication ket
+        auth = self.request.get("auth")
+        if auth != settings.AUTH:
+            return self.error(401)
+
         # get the JSON from the request
         json = self.request.body
         # convert the JSON to a Python object 
@@ -134,6 +166,9 @@ class BookHandler(webapp.RequestHandler):
         # set the properties
         title = representation['title']
         ident = representation['ident']
+        author = representation['author']
+        image = representation['image']
+        notes = representation['notes']
         url = representation['url']
         
         try:
@@ -141,12 +176,18 @@ class BookHandler(webapp.RequestHandler):
             book = Book.all().filter('ident =', ident)[0]
             book.title = title
             book.ident = ident
+            book.author = author
+            book.image = image
+            book.notes = notes
             book.url = url
         except IndexError:
             # if we don't find a book then create one
             book = Book(
                 title = title,
                 ident = ident,
+                author = author,
+                image = image,
+                notes = notes,
                 url = url
             )
         logging.info("Update request for %s (%s)" % (title, ident))
@@ -165,6 +206,12 @@ class BookHandler(webapp.RequestHandler):
     
     def delete(self, ident):
         "Delete the book from the datastore"
+        
+        # check we have the correct authentication ket
+        auth = self.request.get("auth")
+        if auth != settings.AUTH:
+            return self.error(401)
+        
         try:
             # retrieve the book based on its ident value
             book = Book.all().filter('ident =', ident)[0]

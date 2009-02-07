@@ -5,12 +5,13 @@ This site generates an admin interface to a RESTful webservice.
 """
 
 # TODO: Styles
-# TODO: Tests
 
 import os
 import wsgiref.handlers
-import simplejson
 import logging
+import pickle
+
+from django.utils import simplejson
 
 import gmemsess
 
@@ -31,7 +32,7 @@ class BooksHandler(webapp.RequestHandler):
         "Build the admin interface"        
         try:
             # get the JSON from the webservice
-            response = fetch(settings.WEB_SERVICE_URL)
+            response = fetch("%s?auth=%s" % (settings.WEB_SERVICE_URL, settings.AUTH))
         except DownloadError:
             self.error(500)
         json = response.content
@@ -77,10 +78,21 @@ class AddBookHandler(webapp.RequestHandler):
         user = users.get_current_user()
         logout = users.create_logout_url("/")
         # seed the context with the user details
+        
+        # initialise session
+        sess = gmemsess.Session(self)  
+        # get the flash message if any
+        book_sess = sess.get("book", "")
+        if book_sess:
+            book = pickle.loads(book_sess)
+        else:
+            book = ""
+        
         context = {
             "user": user,
             "logout": logout,
             "version": os.environ['CURRENT_VERSION_ID'],
+            "book": book,
         }
         # calculate the template path
         path = os.path.join(os.path.dirname(__file__), 'templates',
@@ -93,34 +105,46 @@ class AddBookHandler(webapp.RequestHandler):
         # get the posted data
         title = self.request.get("title")
         ident = self.request.get("ident")
+        author = self.request.get("author")
+        image = self.request.get("image")
+        notes = self.request.get("notes")
         url = self.request.get("url")
-        # create the JSON object
+        
         book = {
             "title": title,
             "ident": ident,
+            "author": author,
+            "image": image,
+            "notes": notes,
             "url": url,
             "message": ""
         }
-        json = simplejson.dumps(book, sort_keys=False)
-        # work out the url for the book
-        url = "%s%s" % (settings.WEB_SERVICE_URL, ident)       
-        logging.info("Request to add %s (%s)" % (title, ident))
-        try:
-            # send a PUT request to add or update the book record
-            fetch(url, method=PUT, payload=json)
-        except DownloadError:
-            self.error(500)
-        # redirect back to the home page
 
         # grab the session data
         sess = gmemsess.Session(self)
-        # set the flash message
-        sess["flash"] = "Added book %s (%s)" % (title, ident)
-        # save the session data
-        sess.save()
 
-        # redirect back to the home page
-        self.redirect("/")
+        if title and ident and author and image and notes and url:
+            # create the JSON object
+            json = simplejson.dumps(book, sort_keys=False)
+            # work out the url for the book
+            url = "%s%s?auth=%s" % (settings.WEB_SERVICE_URL, ident, settings.AUTH)       
+            logging.info("Request to add %s (%s)" % (title, ident))
+            try:
+                # send a PUT request to add or update the book record
+                fetch(url, method=PUT, payload=json)
+            except DownloadError:
+                self.error(500)
+            # set the flash message
+            sess["flash"] = "Added book %s (%s)" % (title, ident)
+            # save the session data
+            sess.save()
+            self.redirect("/")
+            # redirect back to the home page
+        else:
+            sess["book"] = pickle.dumps(book)
+            # save the session data
+            sess.save()
+            self.redirect("/add")
         
 class DeleteBookHandler(webapp.RequestHandler):
     "Handlers for deleting records"
@@ -129,7 +153,7 @@ class DeleteBookHandler(webapp.RequestHandler):
         # get the ident from the request
         ident = self.request.get("ident")
         # work out the webservice url
-        url = "%s%s" % (settings.WEB_SERVICE_URL, ident)
+        url = "%s%s?auth=%s" % (settings.WEB_SERVICE_URL, ident, settings.AUTH)
         logging.info("Request to delete book with ident %s" % ident)
         try:
             # send a DELETE request for that record

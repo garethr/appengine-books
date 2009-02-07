@@ -4,7 +4,7 @@
     {% if books %}
     <ul>
     {% for book in books %}
-        <li>{{book.title}}  
+        <li><img src="{{book.image}}" alt="cover for {{book.title}}"/>
             <form action="/delete/" method="post">
                 <input type="hidden" name="ident" value="{{book.ident}}" />
                 <input type="submit"  value="Delete" />

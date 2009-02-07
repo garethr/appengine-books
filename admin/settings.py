@@ -7,3 +7,6 @@ DEBUG = True
 
 # where does the webservice live
 WEB_SERVICE_URL = "http://localhost:8080/books/"
+
+# authorisation key
+AUTH = "G1R2"
